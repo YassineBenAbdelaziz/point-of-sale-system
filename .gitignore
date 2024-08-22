@@ -1,6 +1,5 @@
 # editor
 .vscode/
 
-
-# environment
-.env
+# Personal files
+Todo.md
