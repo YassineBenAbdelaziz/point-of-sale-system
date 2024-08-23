@@ -1,7 +1,15 @@
-import { BaseEntity, Column } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { CustomerInvoice } from '../../customer-invoice/entities/customer-invoice.entity';
 
-export class Overpay extends BaseEntity {
-  @Column({ type: 'varchar', length: 255, nullable: false })
+@Entity('overpays')
+export class Overpay {
+  @PrimaryGeneratedColumn('uuid')
   code: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 3, nullable: false })
@@ -12,4 +20,14 @@ export class Overpay extends BaseEntity {
 
   @Column({ type: 'boolean', nullable: false })
   used: boolean;
+
+  @OneToOne(
+    () => CustomerInvoice,
+    (customerInvoice) => customerInvoice.overpay,
+    {
+      nullable: false,
+    },
+  )
+  @JoinColumn({ name: 'invoice_id' })
+  invoice: CustomerInvoice;
 }
