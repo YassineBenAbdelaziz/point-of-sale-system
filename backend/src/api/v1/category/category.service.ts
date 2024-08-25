@@ -4,34 +4,21 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
+import { ICategoryService } from './Icategory.service';
 
 @Injectable()
-export class CategoryService {
+export class CategoryService implements ICategoryService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto) {
-    const category: Category =
-      await this.categoryRepository.save(createCategoryDto);
-
-    return {
-      message: 'Category created successfully',
-      statusCode: 201,
-      data: category,
-    };
+    return await this.categoryRepository.save(createCategoryDto);
   }
 
   async findAll() {
-    const [results, total] = await this.categoryRepository.findAndCount();
-
-    return {
-      message: 'Categories retrieved successfully',
-      statusCode: 200,
-      count: total,
-      data: results,
-    };
+    return await this.categoryRepository.find();
   }
 
   async findOne(id: number) {
@@ -39,12 +26,7 @@ export class CategoryService {
     if (!category) {
       throw new NotFoundException(`Category #${id} not found`);
     }
-
-    return {
-      message: 'Category retrieved successfully',
-      statusCode: 200,
-      data: category,
-    };
+    return category;
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
@@ -56,11 +38,7 @@ export class CategoryService {
 
     await this.categoryRepository.update(id, updateCategoryDto);
 
-    return {
-      message: 'Category updated successfully',
-      statusCode: 200,
-      data: { ...category, ...updateCategoryDto },
-    };
+    return { ...category, ...updateCategoryDto };
   }
 
   async remove(id: number) {
@@ -68,10 +46,5 @@ export class CategoryService {
     if (!affected) {
       throw new NotFoundException(`Category #${id} not found`);
     }
-
-    return {
-      message: 'Category deleted successfully',
-      statusCode: 200,
-    };
   }
 }
