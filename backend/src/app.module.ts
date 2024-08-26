@@ -9,6 +9,7 @@ import { PaymentsModule } from './api/v1/payments/payments.module';
 import { PaymentTypeModule } from './api/v1/payment-type/payment-type.module';
 import { OverpayModule } from './api/v1/overpay/overpay.module';
 import { InvoiceProductsModule } from './api/v1/invoice-products/invoice-products.module';
+import { ProductFamilyModule } from './api/v1/product-family/product-family.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { InvoiceProductsModule } from './api/v1/invoice-products/invoice-product
     PaymentTypeModule,
     OverpayModule,
     InvoiceProductsModule,
+    ProductFamilyModule,
   ],
   controllers: [],
   providers: [],
