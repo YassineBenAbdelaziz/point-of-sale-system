@@ -1,34 +1,76 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { ProductFamilyService } from './product-family.service';
 import { CreateProductFamilyDto } from './dto/create-product-family.dto';
 import { UpdateProductFamilyDto } from './dto/update-product-family.dto';
 
-@Controller('product-family')
+@Controller('product-families')
 export class ProductFamilyController {
   constructor(private readonly productFamilyService: ProductFamilyService) {}
 
   @Post()
-  create(@Body() createProductFamilyDto: CreateProductFamilyDto) {
-    return this.productFamilyService.create(createProductFamilyDto);
+  async create(@Body() createProductFamilyDto: CreateProductFamilyDto) {
+    const family = await this.productFamilyService.create(
+      createProductFamilyDto,
+    );
+    return {
+      message: 'Product Family created successfully',
+      statusCode: HttpStatus.CREATED,
+      data: family,
+    };
   }
 
   @Get()
-  findAll() {
-    return this.productFamilyService.findAll();
+  async findAll() {
+    const families = await this.productFamilyService.findAll();
+    return {
+      message: 'Product Families fetched successfully',
+      statusCode: HttpStatus.OK,
+      data: families,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productFamilyService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const family = await this.productFamilyService.findOne(id);
+    return {
+      message: 'Product Family fetched successfully',
+      statusCode: HttpStatus.OK,
+      data: family,
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductFamilyDto: UpdateProductFamilyDto) {
-    return this.productFamilyService.update(+id, updateProductFamilyDto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductFamilyDto: UpdateProductFamilyDto,
+  ) {
+    const updatedFamily = await this.productFamilyService.update(
+      id,
+      updateProductFamilyDto,
+    );
+    return {
+      message: 'Product Family updated successfully',
+      statusCode: HttpStatus.OK,
+      data: updatedFamily,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productFamilyService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.productFamilyService.remove(id);
+    return {
+      message: 'Product Family deleted successfully',
+      statusCode: HttpStatus.OK,
+    };
   }
 }

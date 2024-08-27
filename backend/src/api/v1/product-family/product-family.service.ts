@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductFamilyDto } from './dto/create-product-family.dto';
 import { UpdateProductFamilyDto } from './dto/update-product-family.dto';
+import { IProductFamilyService } from './Iproduct-family.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ProductFamily } from './entities/product-family.entity';
 
 @Injectable()
-export class ProductFamilyService {
-  create(createProductFamilyDto: CreateProductFamilyDto) {
-    return 'This action adds a new productFamily';
+export class ProductFamilyService implements IProductFamilyService {
+  constructor(
+    @InjectRepository(ProductFamily)
+    private readonly productFamilyRepository: Repository<ProductFamily>,
+  ) {}
+
+  async create(createProductFamilyDto: CreateProductFamilyDto) {
+    const family = await this.productFamilyRepository.save(
+      createProductFamilyDto,
+    );
+    return family;
   }
 
-  findAll() {
-    return `This action returns all productFamily`;
+  async findAll() {
+    const families = await this.productFamilyRepository.find();
+    return families;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productFamily`;
+  async findOne(id: number) {
+    const family = await this.productFamilyRepository.findOne({
+      where: { id },
+    });
+    if (!family)
+      throw new NotFoundException(`Product Family with id ${id} not found`);
+
+    return family;
   }
 
-  update(id: number, updateProductFamilyDto: UpdateProductFamilyDto) {
-    return `This action updates a #${id} productFamily`;
+  async update(id: number, updateProductFamilyDto: UpdateProductFamilyDto) {
+    const family = await this.productFamilyRepository.findOne({
+      where: { id },
+    });
+    if (!family)
+      throw new NotFoundException(`Product Family with id ${id} not found`);
+
+    await this.productFamilyRepository.update(id, updateProductFamilyDto);
+    return { ...family, ...updateProductFamilyDto };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productFamily`;
+  async remove(id: number) {
+    const { affected } = await this.productFamilyRepository.delete({ id });
+    if (affected === 0)
+      throw new NotFoundException(`Product Family with id ${id} not found`);
   }
 }
