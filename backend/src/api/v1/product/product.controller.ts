@@ -1,11 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ProductService } from './product.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Inject,
+  Query,
+  HttpStatus,
+  ParseIntPipe,
+} from '@nestjs/common';
+
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { IProductService } from './Iproduct.service';
+import { PaginationParams } from 'src/shared/classes/paginationParams';
 
-@Controller('product')
+@Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    @Inject('IProductService')
+    private readonly productService: IProductService,
+  ) {}
 
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
@@ -13,22 +30,47 @@ export class ProductController {
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  async findAll(@Query() paginationParams: PaginationParams) {
+    const results = await this.productService.findAll(paginationParams);
+    return {
+      message: 'Products fetched successfully',
+      statusCode: HttpStatus.OK,
+      ...results,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const product = await this.productService.findOne(id);
+    return {
+      message: 'Product fetched successfully',
+      statusCode: HttpStatus.OK,
+      data: product,
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    const updatedProduct = await this.productService.update(
+      id,
+      updateProductDto,
+    );
+    return {
+      message: 'Product updated successfully',
+      statusCode: HttpStatus.OK,
+      data: updatedProduct,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.productService.remove(id);
+    return {
+      message: 'Product deleted successfully',
+      statusCode: HttpStatus.OK,
+    };
   }
 }
