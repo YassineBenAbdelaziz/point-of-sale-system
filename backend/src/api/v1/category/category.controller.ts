@@ -9,11 +9,16 @@ import {
   ParseIntPipe,
   Inject,
   HttpStatus,
+  ParseArrayPipe,
+  BadRequestException,
+  Query,
+  ParseBoolPipe,
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ICategoryService } from './Icategory.service';
 import { Category } from './entities/category.entity';
+import { CreateChildCategoryDto } from './dto/create-child-category.dto';
 
 @Controller('categories')
 export class CategoryController {
@@ -35,8 +40,8 @@ export class CategoryController {
   }
 
   @Get()
-  async findAll() {
-    const categories: Category[] = await this.categoryService.findAll();
+  async findAll(@Query('root', ParseBoolPipe) root: boolean) {
+    const categories: Category[] = await this.categoryService.findAll(root);
     return {
       message: 'Categories fetched successfully',
       statusCode: HttpStatus.OK,
@@ -77,6 +82,26 @@ export class CategoryController {
     return {
       message: 'Category deleted successfully',
       statusCode: HttpStatus.OK,
+    };
+  }
+
+  @Post(':id/children')
+  async createChildren(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ParseArrayPipe({ items: CreateChildCategoryDto }))
+    createChildCategoryDtos: CreateChildCategoryDto[],
+  ) {
+    if (createChildCategoryDtos?.length === 0) {
+      throw new BadRequestException('At least one child category is required');
+    }
+    const categories = await this.categoryService.createChildren(
+      id,
+      createChildCategoryDtos,
+    );
+    return {
+      message: 'Children Categories created successfully',
+      statusCode: HttpStatus.CREATED,
+      data: categories,
     };
   }
 }

@@ -4,10 +4,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './Iproduct.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
 import { PaginationParams } from 'src/shared/classes/paginationParams';
-import { ProductFamily } from '../product-family/entities/product-family.entity';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -16,38 +15,25 @@ export class ProductService implements IProductService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @InjectRepository(ProductFamily)
-    private readonly productFamilyRepository: Repository<ProductFamily>,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
-    const { familyId, categoriesIds } = createProductDto;
+    const { categoryId } = createProductDto;
 
-    const categories = await this.categoryRepository.findBy({
-      id: In(categoriesIds),
-    });
-
-    if (categories.length !== categoriesIds.length) {
-      throw new NotFoundException(`Some Categories not found`);
-    }
-
-    let family = null;
-    if (familyId) {
-      family = await this.productFamilyRepository.findOne({
-        where: { id: familyId },
+    let category = null;
+    if (categoryId) {
+      category = await this.categoryRepository.findOne({
+        where: { id: categoryId },
       });
 
-      if (!family) {
-        throw new NotFoundException(
-          `Product Family with id ${familyId} not found`,
-        );
+      if (!category) {
+        throw new NotFoundException(`Category with id ${categoryId} not found`);
       }
     }
 
     const product = await this.productRepository.create({
       ...createProductDto,
-      family,
-      categories,
+      category,
     });
 
     await this.productRepository.save(product);
@@ -78,42 +64,28 @@ export class ProductService implements IProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
-    const { familyId, categoriesIds } = updateProductDto;
+    const { categoryId } = updateProductDto;
 
     const product = await this.productRepository.findOne({ where: { id } });
     if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
 
-    let categories = undefined;
-    if (categoriesIds) {
-      categories = await this.categoryRepository.findBy({
-        id: In(categoriesIds),
+    let category = null;
+    if (categoryId) {
+      category = await this.categoryRepository.findOne({
+        where: { id: categoryId },
       });
 
-      if (categories.length !== categoriesIds.length) {
-        throw new NotFoundException(`Some Categories not found`);
-      }
-    }
-
-    let family = null;
-    if (familyId) {
-      family = await this.productFamilyRepository.findOne({
-        where: { id: familyId },
-      });
-
-      if (!family) {
-        throw new NotFoundException(
-          `Product Family with id ${familyId} not found`,
-        );
+      if (!category) {
+        throw new NotFoundException(`Category with id ${categoryId} not found`);
       }
     }
 
     const updatedProduct = await this.productRepository.create({
       ...product,
       ...updateProductDto,
-      family,
-      categories,
+      category,
     });
     await this.productRepository.save(updatedProduct);
     return updatedProduct;
