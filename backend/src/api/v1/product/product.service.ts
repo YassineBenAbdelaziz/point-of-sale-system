@@ -7,7 +7,6 @@ import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
 import { PaginationParams } from 'src/shared/classes/paginationParams';
-import { ProductFamily } from '../product-family/entities/product-family.entity';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -16,8 +15,6 @@ export class ProductService implements IProductService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @InjectRepository(ProductFamily)
-    private readonly productFamilyRepository: Repository<ProductFamily>,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -76,7 +73,7 @@ export class ProductService implements IProductService {
 
     let category = null;
     if (categoryId) {
-      category = await this.productFamilyRepository.findOne({
+      category = await this.categoryRepository.findOne({
         where: { id: categoryId },
       });
 
