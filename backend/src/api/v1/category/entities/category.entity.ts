@@ -1,7 +1,16 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Tree,
+  TreeChildren,
+  TreeParent,
+} from 'typeorm';
 import { Product } from '../../product/entities/product.entity';
 
 @Entity('categories')
+@Tree('closure-table')
 export class Category {
   @PrimaryGeneratedColumn('increment', { type: 'integer' })
   id: number;
@@ -12,8 +21,16 @@ export class Category {
   @Column({ type: 'varchar', length: 255, nullable: false })
   description: string;
 
-  @ManyToMany(() => Product, (product) => product.categories, {
+  @TreeParent({
     onDelete: 'CASCADE',
+  })
+  parent: Category | null;
+
+  @TreeChildren()
+  subCategories: Category[];
+
+  @OneToMany(() => Product, (product) => product.category, {
+    onDelete: 'SET NULL',
     lazy: true,
   })
   products: Product[];

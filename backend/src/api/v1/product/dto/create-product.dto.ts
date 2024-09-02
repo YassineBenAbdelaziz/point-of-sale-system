@@ -27,13 +27,8 @@ export class CreateProductDto {
   @IsOptional()
   @IsInt()
   @IsPositive()
-  familyId?: number;
+  categoryId?: number;
 
   @IsOptional()
   image: string;
-
-  @IsNotEmpty()
-  @IsArray()
-  @IsInt({ each: true })
-  categoriesIds: number[];
 }

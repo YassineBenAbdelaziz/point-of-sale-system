@@ -11,7 +11,4 @@ export class ProductFamily {
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   description: string;
-
-  @OneToMany(() => Product, (product) => product.family, { lazy: true })
-  products: Product[];
 }

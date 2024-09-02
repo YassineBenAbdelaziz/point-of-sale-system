@@ -3,7 +3,7 @@ import { CreateProductDto } from './create-product.dto';
 import { IsInt, IsOptional, IsPositive } from 'class-validator';
 
 export class UpdateProductDto extends PartialType(
-  OmitType(CreateProductDto, ['familyId'] as const),
+  OmitType(CreateProductDto, ['categoryId'] as const),
   {
     skipNullProperties: false,
   },
@@ -11,5 +11,5 @@ export class UpdateProductDto extends PartialType(
   @IsOptional()
   @IsInt()
   @IsPositive()
-  familyId?: number;
+  categoryId?: number;
 }
