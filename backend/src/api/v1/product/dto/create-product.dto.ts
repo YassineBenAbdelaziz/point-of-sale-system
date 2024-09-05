@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -23,6 +22,12 @@ export class CreateProductDto {
   @IsPositive()
   @Min(0.01)
   price: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  @Min(1)
+  stock: number;
 
   @IsOptional()
   @IsInt()

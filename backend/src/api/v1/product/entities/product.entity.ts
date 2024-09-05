@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/shared/entities/base-entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Category } from '../../category/entities/category.entity';
-import { InvoiceProduct } from '../../invoice-products/entities/invoice-product.entity';
+import { PurchaseItem } from '../../purchase-items/entities/purchase-item.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -13,6 +13,9 @@ export class Product extends BaseEntity {
 
   @Column({ type: 'decimal', precision: 10, scale: 3, nullable: false })
   price: number;
+
+  @Column({ type: 'integer', nullable: false })
+  stock: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   image: string;
@@ -28,6 +31,6 @@ export class Product extends BaseEntity {
   })
   category: Category | null;
 
-  @OneToMany(() => InvoiceProduct, (invoiceProduct) => invoiceProduct.productId)
-  invoices: InvoiceProduct[];
+  @OneToMany(() => PurchaseItem, (purchaseItem) => purchaseItem.productId)
+  purchases: PurchaseItem[];
 }

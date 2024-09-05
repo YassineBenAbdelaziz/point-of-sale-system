@@ -8,7 +8,8 @@ import { CustomerModule } from './api/v1/customer/customer.module';
 import { PaymentsModule } from './api/v1/payments/payments.module';
 import { PaymentTypeModule } from './api/v1/payment-type/payment-type.module';
 import { OverpayModule } from './api/v1/overpay/overpay.module';
-import { InvoiceProductsModule } from './api/v1/invoice-products/invoice-products.module';
+import { InvoiceProductsModule } from './api/v1/purchase-items/purchase-tem.module';
+import { PurchaseModule } from './api/v1/purchase/purchase.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { InvoiceProductsModule } from './api/v1/invoice-products/invoice-product
     PaymentTypeModule,
     OverpayModule,
     InvoiceProductsModule,
+    PurchaseModule,
   ],
   controllers: [],
   providers: [],
