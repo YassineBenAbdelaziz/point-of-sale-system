@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { CustomerInvoice } from '../../customer-invoice/entities/customer-invoice.entity';
 import { BaseEntity } from 'src/shared/entities/base-entity';
+import { Purchase } from '../../purchase/entities/purchase.entity';
 
 @Entity('customers')
 export class Customer extends BaseEntity {
@@ -19,9 +19,6 @@ export class Customer extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: false, unique: true })
   phone: string;
 
-  @OneToMany(
-    () => CustomerInvoice,
-    (customerInvoice) => customerInvoice.customer,
-  )
-  invoices: CustomerInvoice[];
+  @OneToMany(() => Purchase, (purchase) => purchase.customer)
+  purchases: Purchase[];
 }
