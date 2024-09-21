@@ -1,16 +1,8 @@
 import { BaseEntity } from 'src/shared/entities/base-entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
-import { InvoiceProduct } from '../../invoice-products/entities/invoice-product.entity';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Payment } from '../../payments/entities/payment.entity';
 import { Overpay } from '../../overpay/entities/overpay.entity';
-import { Customer } from '../../customer/entities/customer.entity';
+import { Purchase } from '../../purchase/entities/purchase.entity';
 
 @Entity('customers_invoices')
 export class CustomerInvoice extends BaseEntity {
@@ -24,15 +16,13 @@ export class CustomerInvoice extends BaseEntity {
   @JoinColumn({ name: 'overpay_id' })
   overpay: Overpay;
 
-  @OneToMany(() => InvoiceProduct, (invoiceProduct) => invoiceProduct.invoiceId)
-  products: InvoiceProduct[];
-
   @OneToMany(() => Payment, (payment) => payment.invoice)
   payments: Payment[];
 
-  @ManyToOne(() => Customer, (customer) => customer.invoices, {
-    nullable: false,
+  @OneToOne(() => Purchase, (purchase) => purchase.invoice)
+  @JoinColumn({
+    name: 'purchase_id',
+    foreignKeyConstraintName: 'FK_invoice_purchase',
   })
-  @JoinColumn({ name: 'customer_id' })
-  customer: Customer;
+  purchase: Purchase;
 }
