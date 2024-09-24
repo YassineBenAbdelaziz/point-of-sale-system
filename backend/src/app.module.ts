@@ -11,6 +11,7 @@ import { OverpayModule } from './api/v1/overpay/overpay.module';
 import { InvoiceProductsModule } from './api/v1/purchase-items/purchase-tem.module';
 import { PurchaseModule } from './api/v1/purchase/purchase.module';
 import { PriceListModule } from './api/v1/price-list/price-list.module';
+import { LoyaltyProgramsModule } from './api/v1/loyalty-programs/loyalty-programs.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PriceListModule } from './api/v1/price-list/price-list.module';
     InvoiceProductsModule,
     PurchaseModule,
     PriceListModule,
+    LoyaltyProgramsModule,
   ],
   controllers: [],
   providers: [],
