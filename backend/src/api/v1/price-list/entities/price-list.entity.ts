@@ -1,6 +1,6 @@
 import { BaseEntity } from 'src/shared/entities/base-entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { PriceListProduct } from './price-list-product';
+import { PriceListProduct } from './price-list-product.entity';
 
 @Entity('price-lists')
 export class PriceList extends BaseEntity {

@@ -2,7 +2,8 @@ import { BaseEntity } from 'src/shared/entities/base-entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Category } from '../../category/entities/category.entity';
 import { PurchaseItem } from '../../purchase-items/entities/purchase-item.entity';
-import { PriceListProduct } from '../../price-list/entities/price-list-product';
+import { PriceListProduct } from '../../price-list/entities/price-list-product.entity';
+import { BuyX_GetY } from '../../loyalty-programs/entities/buy-x-get-y.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -40,4 +41,10 @@ export class Product extends BaseEntity {
     (priceListProduct) => priceListProduct.product,
   )
   priceListProducts: PriceListProduct[];
+
+  @OneToMany(() => BuyX_GetY, (buyXGetY) => buyXGetY.xProduct)
+  buyThisGetY: BuyX_GetY[];
+
+  @OneToMany(() => BuyX_GetY, (buyXGetY) => buyXGetY.yProduct)
+  buyXGetThis: BuyX_GetY[];
 }
