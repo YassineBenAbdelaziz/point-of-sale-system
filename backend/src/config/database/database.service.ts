@@ -13,7 +13,7 @@ export class DatabaseService {
       username: this.configService.getOrThrow('DB_USER'),
       password: this.configService.getOrThrow('DB_PASS'),
       database: this.configService.getOrThrow('DB_NAME'),
-      synchronize: this.configService.getOrThrow('DB_SYNC'),
+      synchronize: false,
       autoLoadEntities: true,
     };
 
