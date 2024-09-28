@@ -1,11 +1,9 @@
 import {
   IsDateString,
   IsEmail,
-  IsInt,
   IsNotEmpty,
   IsString,
   Length,
-  MaxDate,
 } from 'class-validator';
 import { IsPastDate } from 'src/decorators/validation/is-past-date';
 

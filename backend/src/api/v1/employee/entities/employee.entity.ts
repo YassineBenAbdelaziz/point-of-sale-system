@@ -1,7 +1,6 @@
 import { BaseEntity } from 'src/shared/entities/base-entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Role } from './role.entity';
-import { Exclude, Expose } from 'class-transformer';
 
 @Entity('employee')
 export class Employee extends BaseEntity {
