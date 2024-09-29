@@ -12,6 +12,8 @@ import { InvoiceProductsModule } from './api/v1/purchase-items/purchase-tem.modu
 import { PurchaseModule } from './api/v1/purchase/purchase.module';
 import { PriceListModule } from './api/v1/price-list/price-list.module';
 import { LoyaltyProgramsModule } from './api/v1/loyalty-programs/loyalty-programs.module';
+import { EmployeeModule } from './api/v1/employee/employee.module';
+import { AuthModule } from './api/v1/auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { LoyaltyProgramsModule } from './api/v1/loyalty-programs/loyalty-program
     PurchaseModule,
     PriceListModule,
     LoyaltyProgramsModule,
+    EmployeeModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
