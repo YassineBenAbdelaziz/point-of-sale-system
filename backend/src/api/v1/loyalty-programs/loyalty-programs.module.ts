@@ -7,6 +7,7 @@ import { Coupon } from './entities/coupon.entity';
 import { BuyX_GetY } from './entities/buy-x-get-y.entity';
 import { DiscountCode } from './entities/discount-code.entity';
 import { Product } from '../product/entities/product.entity';
+import { DiscountService } from './discount.service';
 
 @Module({
   imports: [
@@ -24,6 +25,14 @@ import { Product } from '../product/entities/product.entity';
       provide: 'ILoyaltyProgramService',
       useClass: LoyaltyProgramsService,
     },
+    DiscountService,
+  ],
+  exports: [
+    {
+      provide: 'ILoyaltyProgramService',
+      useClass: LoyaltyProgramsService,
+    },
+    DiscountService,
   ],
 })
 export class LoyaltyProgramsModule {}

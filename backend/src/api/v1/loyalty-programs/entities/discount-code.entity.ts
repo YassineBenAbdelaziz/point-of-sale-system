@@ -6,7 +6,7 @@ export class DiscountCode {
   @PrimaryColumn({ type: 'varchar', length: 15, nullable: false })
   code: string;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
   @ManyToOne(

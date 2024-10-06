@@ -149,4 +149,32 @@ export class LoyaltyProgramsService implements ILoyaltyProgramService {
 
     return discountCode.loyaltyProgram;
   }
+
+  async findByDiscountCodes(codes: string[]) {
+    const loyaltyPrograms = await this.loyaltyProgramRepository
+      .createQueryBuilder('loyaltyProgram')
+      .leftJoinAndSelect('loyaltyProgram.discountCodes', 'discountCode')
+      .leftJoinAndSelect('loyaltyProgram.coupon', 'coupon')
+      .leftJoinAndSelect('loyaltyProgram.buyXGetY', 'buyXGetY')
+      .where('discountCode.code IN (:...codes)', { codes })
+      .getMany();
+
+    const discountCodes = [];
+    loyaltyPrograms.forEach((program) => {
+      program.discountCodes.forEach((code) => discountCodes.push(code));
+    });
+    const codesMap = new Map(discountCodes.map((code) => [code.code, code]));
+
+    for (const code of codes) {
+      const discount = codesMap.get(code);
+      if (!discount) {
+        throw new NotFoundException(`Discount with code ${code} not found`);
+      }
+    }
+
+    if (codes.length !== codesMap.size)
+      throw new NotFoundException(`There was a duplicate discount code`);
+
+    return loyaltyPrograms;
+  }
 }
