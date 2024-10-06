@@ -14,5 +14,11 @@ import { Category } from '../category/entities/category.entity';
       useClass: ProductService,
     },
   ],
+  exports: [
+    {
+      provide: 'IProductService',
+      useClass: ProductService,
+    },
+  ],
 })
 export class ProductModule {}
