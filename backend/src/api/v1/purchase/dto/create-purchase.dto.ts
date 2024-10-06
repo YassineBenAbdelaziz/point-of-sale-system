@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  IsString,
   ValidateNested,
 } from 'class-validator';
 import { CreatePurchaseItemDto } from '../../purchase-items/dto/create-purchase-item.dto.';
@@ -24,4 +25,9 @@ export class CreatePurchaseDto {
   @ValidateNested({ each: true })
   @Type(() => CreatePurchaseItemDto)
   items: CreatePurchaseItemDto[];
+
+  @IsNotEmpty()
+  @IsArray()
+  @IsString({ each: true })
+  buyX_getY_codes: string[];
 }

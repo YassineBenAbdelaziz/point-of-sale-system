@@ -1,13 +1,23 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Product } from '../../product/entities/product.entity';
 import { Purchase } from '../../purchase/entities/purchase.entity';
 
 @Entity('purchase_items')
 export class PurchaseItem {
-  @PrimaryColumn({ type: 'integer' })
+  @PrimaryGeneratedColumn('increment', { type: 'integer' })
+  id: number;
+
+  @Column({ type: 'integer', nullable: false })
   purchaseId: number;
 
-  @PrimaryColumn({ type: 'integer' })
+  @Column({ type: 'integer', nullable: false })
   productId: number;
 
   @ManyToOne(() => Purchase, (purchase) => purchase.items, {
