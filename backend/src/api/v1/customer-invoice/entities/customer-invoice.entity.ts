@@ -19,10 +19,8 @@ export class CustomerInvoice extends BaseEntity {
   @OneToMany(() => Payment, (payment) => payment.invoice)
   payments: Payment[];
 
-  @OneToOne(() => Purchase, (purchase) => purchase.invoice)
-  @JoinColumn({
-    name: 'purchase_id',
-    foreignKeyConstraintName: 'FK_invoice_purchase',
+  @OneToOne(() => Purchase, (purchase) => purchase.invoice, {
+    nullable: false,
   })
   purchase: Purchase;
 }
