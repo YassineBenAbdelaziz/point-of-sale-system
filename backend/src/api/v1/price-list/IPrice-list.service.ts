@@ -13,6 +13,8 @@ export interface IPriceListService {
 
   findOne(id: number): Promise<PriceList>;
 
+  findAllValidPriceListsForCustomer(customerId?: number): Promise<PriceList[]>;
+
   update(
     id: number,
     updatePriceListDto: UpdatePriceListDto,

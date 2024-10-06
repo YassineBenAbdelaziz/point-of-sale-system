@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/shared/entities/base-entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { PriceListProduct } from './price-list-product.entity';
+import { Customer } from '../../customer/entities/customer.entity';
 
 @Entity('price-lists')
 export class PriceList extends BaseEntity {
@@ -11,7 +12,7 @@ export class PriceList extends BaseEntity {
   description: string;
 
   @Column({ type: 'date', nullable: true })
-  expriresAt: Date | null;
+  expiresAt: Date | null;
 
   @OneToMany(
     () => PriceListProduct,
@@ -21,4 +22,7 @@ export class PriceList extends BaseEntity {
     },
   )
   products: PriceListProduct[];
+
+  @ManyToMany(() => Customer, (customer) => customer.priceLists)
+  customers: Customer[];
 }
