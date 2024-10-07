@@ -25,5 +25,11 @@ import { CustomerModule } from '../customer/customer.module';
       useClass: PurchaseService,
     },
   ],
+  exports: [
+    {
+      provide: 'IPurchaseService',
+      useClass: PurchaseService,
+    },
+  ],
 })
 export class PurchaseModule {}

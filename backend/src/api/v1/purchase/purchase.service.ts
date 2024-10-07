@@ -183,6 +183,11 @@ export class PurchaseService implements IPurchaseService {
       if (program.expiresAt < today)
         throw new BadRequestException('Program has expired');
 
+      if (program.type !== 'BUY_X_GET_Y')
+        throw new BadRequestException(
+          'Loyalty Program is not a buy X get Y program',
+        );
+
       program.discountCodes.forEach((code) => {
         if (!code.isActive)
           throw new BadRequestException('Code has been already used');
