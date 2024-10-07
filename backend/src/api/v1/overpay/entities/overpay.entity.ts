@@ -28,6 +28,5 @@ export class Overpay {
       nullable: false,
     },
   )
-  @JoinColumn({ name: 'invoice_id' })
   invoice: CustomerInvoice;
 }

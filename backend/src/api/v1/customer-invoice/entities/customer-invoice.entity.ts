@@ -12,7 +12,10 @@ export class CustomerInvoice extends BaseEntity {
   @Column({ type: 'decimal', precision: 10, scale: 3, nullable: false })
   discount: number;
 
-  @OneToOne(() => Overpay, (overpay) => overpay.invoice, { nullable: true })
+  @OneToOne(() => Overpay, (overpay) => overpay.invoice, {
+    nullable: true,
+    cascade: ['insert'],
+  })
   @JoinColumn({ name: 'overpay_id' })
   overpay: Overpay;
 
