@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,10 +10,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { LoyaltyProgram } from './entities/loyalty-program.entity';
 import { Product } from '../product/entities/product.entity';
-import { randomBytes } from 'crypto';
+
 import { ILoyaltyProgramService } from './ILoyalty-program.service';
 import { PaginationParams } from 'src/shared/classes/paginationParams';
 import { DiscountCode } from './entities/discount-code.entity';
+import { CodeGeneratorService } from 'src/services/code-generator/code-generator.service';
 
 @Injectable()
 export class LoyaltyProgramsService implements ILoyaltyProgramService {
@@ -23,6 +25,8 @@ export class LoyaltyProgramsService implements ILoyaltyProgramService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(DiscountCode)
     private readonly discountCodesRepository: Repository<DiscountCode>,
+    @Inject(CodeGeneratorService)
+    private readonly codeGeneratorService: CodeGeneratorService,
   ) {}
 
   async create(createLoyaltyProgramDto: CreateLoyaltyProgramDto) {
@@ -50,13 +54,7 @@ export class LoyaltyProgramsService implements ILoyaltyProgramService {
       }
     }
 
-    const codes = [];
-    for (let i = 0; i < items; i++) {
-      const temp = randomBytes(64).toString('hex').toUpperCase();
-      const code =
-        temp.slice(0, 4) + '-' + temp.slice(4, 8) + '-' + temp.slice(8, 12);
-      codes.push(code);
-    }
+    const codes = this.codeGeneratorService.generateCodes(items);
 
     const isExisting = await this.discountCodesRepository.exists({
       where: { code: In(codes) },
@@ -134,20 +132,19 @@ export class LoyaltyProgramsService implements ILoyaltyProgramService {
   }
 
   async findByDiscountCode(code: string) {
-    const discountCode = await this.discountCodesRepository.findOne({
-      where: { code },
-      relations: [
-        'loyaltyProgram',
-        'loyaltyProgram.coupon',
-        'loyaltyProgram.buyXGetY',
-      ],
-    });
+    const program = await this.loyaltyProgramRepository
+      .createQueryBuilder('loyaltyProgram')
+      .leftJoinAndSelect('loyaltyProgram.discountCodes', 'discountCode')
+      .leftJoinAndSelect('loyaltyProgram.coupon', 'coupon')
+      .leftJoinAndSelect('loyaltyProgram.buyXGetY', 'buyXGetY')
+      .where('discountCode.code = (:code)', { code })
+      .getOne();
 
-    if (!discountCode) {
-      throw new NotFoundException('Invalid Discount code');
+    if (!program) {
+      throw new NotFoundException(`Discount with code ${code} not found`);
     }
 
-    return discountCode.loyaltyProgram;
+    return program;
   }
 
   async findByDiscountCodes(codes: string[]) {

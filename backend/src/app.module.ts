@@ -14,6 +14,7 @@ import { PriceListModule } from './api/v1/price-list/price-list.module';
 import { LoyaltyProgramsModule } from './api/v1/loyalty-programs/loyalty-programs.module';
 import { EmployeeModule } from './api/v1/employee/employee.module';
 import { AuthModule } from './api/v1/auth/auth.module';
+import { CodeGeneratorModule } from './services/code-generator/code-generator.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AuthModule } from './api/v1/auth/auth.module';
     LoyaltyProgramsModule,
     EmployeeModule,
     AuthModule,
+    CodeGeneratorModule,
   ],
   controllers: [],
   providers: [],
