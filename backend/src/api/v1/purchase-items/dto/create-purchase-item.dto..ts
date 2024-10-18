@@ -11,8 +11,4 @@ export class CreatePurchaseItemDto {
   @Min(1)
   @Max(100)
   quantity: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  adjustedPrice: number;
 }

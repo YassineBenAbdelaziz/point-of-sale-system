@@ -23,4 +23,6 @@ export interface ILoyaltyProgramService {
   remove(id: number): Promise<void>;
 
   findByDiscountCode(code: string): Promise<LoyaltyProgram>;
+
+  findByDiscountCodes(codes: string[]): Promise<LoyaltyProgram[]>;
 }

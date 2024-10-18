@@ -1,5 +1,12 @@
 import { BaseEntity } from 'src/shared/entities/base-entity';
-import { Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Customer } from '../../customer/entities/customer.entity';
 import { CustomerInvoice } from '../../customer-invoice/entities/customer-invoice.entity';
 import { PurchaseItem } from '../../purchase-items/entities/purchase-item.entity';
@@ -14,6 +21,9 @@ export class Purchase extends BaseEntity {
     foreignKeyConstraintName: 'FK_purchase_customer',
   })
   customer: Customer | null;
+
+  @Column({ name: 'invoice_id', nullable: true })
+  invoiceId: number;
 
   @OneToOne(
     () => CustomerInvoice,

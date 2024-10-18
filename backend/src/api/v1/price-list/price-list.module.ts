@@ -15,5 +15,6 @@ import { Product } from '../product/entities/product.entity';
       useClass: PriceListService,
     },
   ],
+  exports: ['IPriceListService'],
 })
 export class PriceListModule {}

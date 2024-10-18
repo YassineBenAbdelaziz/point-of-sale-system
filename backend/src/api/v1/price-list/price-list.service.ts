@@ -87,4 +87,23 @@ export class PriceListService implements IPriceListService {
       throw new NotFoundException(`Price List #${id} not found`);
     }
   }
+
+  async findAllValidPriceListsForCustomer(customerId?: number) {
+    const today = new Date();
+    const query = this.priceListRepository
+      .createQueryBuilder('priceList')
+      .leftJoin(
+        'customers_price_lists',
+        'customer',
+        'customer."priceListsId" = priceList.id',
+      )
+      .leftJoinAndSelect('priceList.products', 'product')
+      .where('priceList.expiresAt > :today', { today })
+      .andWhere('customer.customersId is Null ');
+
+    if (customerId)
+      query.orWhere('(customer.customersId = :customerId )', { customerId });
+
+    return await query.getMany();
+  }
 }

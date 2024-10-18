@@ -4,7 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './Iproduct.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
 import { PaginationParams } from 'src/shared/classes/paginationParams';
 
@@ -61,6 +61,25 @@ export class ProductService implements IProductService {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
     return product;
+  }
+
+  async findByIds(ids: number[]) {
+    const products = await this.productRepository.find({
+      where: { id: In(ids) },
+    });
+
+    const productsMap = new Map(
+      products.map((product) => [product.id, product]),
+    );
+
+    for (const id of ids) {
+      const product = productsMap.get(id);
+      if (!product) {
+        throw new NotFoundException(`Product with id ${id} not found`);
+      }
+    }
+
+    return products;
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
