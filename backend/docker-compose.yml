@@ -1,0 +1,26 @@
+services:
+  pos-postgres:
+    image: postgres:16
+    container_name: pos-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+
+    ports:
+      - "${DB_PORT}:5432"
+
+    volumes:
+      - pos-postgres-data:/var/lib/postgresql/data
+
+    networks:
+      - pos-network
+
+volumes:
+  pos-postgres-data:
+
+networks:
+  pos-network:
+    driver: bridge
