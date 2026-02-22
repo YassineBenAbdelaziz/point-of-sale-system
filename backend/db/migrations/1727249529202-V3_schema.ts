@@ -11,6 +11,9 @@ export class V3Schema1727249529202 implements MigrationInterface {
       `CREATE TABLE "discount_codes" ("code" character varying(15) NOT NULL, "isActive" boolean NOT NULL DEFAULT false, "loyalty_program_id" integer NOT NULL, CONSTRAINT "PK_b967edd0d46547d4a92b4a1c6b3" PRIMARY KEY ("code"))`,
     );
     await queryRunner.query(
+      `CREATE TYPE "public"."loyalty_programs_type_enum" AS ENUM('COUPON', 'BUY_X_GET_Y')`
+    );
+    await queryRunner.query(
       `CREATE TABLE "loyalty_programs" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "name" character varying(255) NOT NULL, "description" character varying(255) NOT NULL, "expiresAt" TIMESTAMP NOT NULL, "type" "public"."loyalty_programs_type_enum" NOT NULL, CONSTRAINT "PK_9911f010986d7730cc744f91ff4" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
@@ -51,6 +54,7 @@ export class V3Schema1727249529202 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "buy_x_get_y"`);
     await queryRunner.query(`DROP TABLE "loyalty_programs"`);
+    await queryRunner.query(`DROP TYPE "public"."loyalty_programs_type_enum"`);
     await queryRunner.query(`DROP TABLE "discount_codes"`);
     await queryRunner.query(`DROP TABLE "coupons"`);
   }

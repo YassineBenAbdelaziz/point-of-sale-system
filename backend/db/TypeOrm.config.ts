@@ -15,4 +15,5 @@ export default new DataSource({
   database: configService.getOrThrow<string>('DB_NAME'),
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/db/migrations/*.js'],
+  migrationsRun: true,
 });
