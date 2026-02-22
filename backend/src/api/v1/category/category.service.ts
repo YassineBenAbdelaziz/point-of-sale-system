@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +10,7 @@ import { Category } from './entities/category.entity';
 import { Repository, TreeRepository } from 'typeorm';
 import { ICategoryService } from './Icategory.service';
 import { CreateChildCategoryDto } from './dto/create-child-category.dto';
+import { CATEGORY_CONSTANTS } from './constants';
 
 @Injectable()
 export class CategoryService implements ICategoryService {
@@ -19,18 +24,24 @@ export class CategoryService implements ICategoryService {
   async create(createCategoryDto: CreateCategoryDto) {
     const { parentId } = createCategoryDto;
     let parent = null;
+
     if (parentId) {
       parent = await this.categoryRepository.findOne({
         where: { id: parentId },
       });
+
       if (!parent) {
         throw new NotFoundException(`Parent Category #${parentId} not found`);
       }
+
+      this.checkAncestorsLimit(parent);
     }
-    const category = await this.categoryRepository.create({
+
+    const category = this.categoryRepository.create({
       ...createCategoryDto,
       parent,
     });
+
     return await this.categoryRepository.save(category);
   }
 
@@ -81,6 +92,8 @@ export class CategoryService implements ICategoryService {
       throw new NotFoundException(`Parent Category #${id} not found`);
     }
 
+    this.checkAncestorsLimit(parent);
+
     const categories = createChildCategoryDtos.map((createChildCategoryDto) => {
       return this.categoryRepository.create({
         ...createChildCategoryDto,
@@ -89,5 +102,13 @@ export class CategoryService implements ICategoryService {
     });
 
     return await this.categoryRepository.save(categories);
+  }
+
+  private async checkAncestorsLimit(parent: Category) {
+    const ancestorNumber =
+      (await this.categoryTreeRepository.countAncestors(parent)) + 1;
+
+    if (ancestorNumber > CATEGORY_CONSTANTS.MAXIMUM_ANCESTORS)
+      throw new BadRequestException('Maximum number of ancestors surpassed');
   }
 }

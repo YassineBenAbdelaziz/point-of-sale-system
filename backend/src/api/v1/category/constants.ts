@@ -1,0 +1,5 @@
+const MAXIMUM_ANCESTORS = 15;
+
+export const CATEGORY_CONSTANTS = {
+  MAXIMUM_ANCESTORS,
+};
