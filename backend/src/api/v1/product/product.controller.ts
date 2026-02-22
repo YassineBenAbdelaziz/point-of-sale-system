@@ -15,7 +15,7 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './Iproduct.service';
-import { PaginationParams } from 'src/shared/classes/paginationParams';
+import { FindProductsDto } from './dto/find-all-products.dto';
 
 @Controller('products')
 export class ProductController {
@@ -30,8 +30,8 @@ export class ProductController {
   }
 
   @Get()
-  async findAll(@Query() paginationParams: PaginationParams) {
-    const results = await this.productService.findAll(paginationParams);
+  async findAll(@Query() findProductsQueryParams: FindProductsDto) {
+    const results = await this.productService.findAll(findProductsQueryParams);
     return {
       message: 'Products fetched successfully',
       statusCode: HttpStatus.OK,

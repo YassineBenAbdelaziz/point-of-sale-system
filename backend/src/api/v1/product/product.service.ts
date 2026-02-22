@@ -4,9 +4,9 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductService } from './Iproduct.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { In, Repository } from 'typeorm';
+import { FindManyOptions, In, Repository, TreeRepository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
-import { PaginationParams } from 'src/shared/classes/paginationParams';
+import { FindProductsDto } from './dto/find-all-products.dto';
 
 @Injectable()
 export class ProductService implements IProductService {
@@ -15,6 +15,8 @@ export class ProductService implements IProductService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Category)
+    private readonly categoryTreeRepository: TreeRepository<Category>,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -40,12 +42,31 @@ export class ProductService implements IProductService {
     return product;
   }
 
-  async findAll(paginationParams: PaginationParams) {
-    const { page, limit } = paginationParams;
-    const [result, total] = await this.productRepository.findAndCount({
+  async findAll(findProductsDto: FindProductsDto) {
+    const { page, limit, parent: parentCategory } = findProductsDto;
+    const options: FindManyOptions = {
       skip: (page - 1) * limit,
       take: limit,
-    });
+    };
+
+    if (parentCategory) {
+      const parent = await this.categoryRepository.findOneBy({
+        id: parentCategory,
+      });
+
+      if (!parent)
+        throw new NotFoundException(
+          `Parent Category ${parentCategory} not found`,
+        );
+
+      const descendantsIds = (
+        await this.categoryTreeRepository.findDescendants(parent)
+      ).map((descendant) => descendant.id);
+
+      options.where = { id: In([...descendantsIds, parentCategory]) };
+    }
+
+    const [result, total] = await this.productRepository.findAndCount(options);
 
     return {
       data: result,
